@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BarChart } from '@mui/icons-material';
+import { Home, BarChart, Schedule, Savings, CalendarMonth, HelpOutline } from '@mui/icons-material'; 
 import { Link } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
@@ -33,6 +33,24 @@ const Sidebar = () => {
         label="SOLAR TRACKER" 
         isHovered={isHovered} 
         path="/solar-tracker" 
+      />
+      <SidebarItem 
+        icon={<CalendarMonth />} 
+        label="DEVICE SCHEDULING" 
+        isHovered={isHovered} 
+        path="/device-scheduling" 
+      />
+      <SidebarItem 
+        icon={<Savings />} 
+        label="SAVINGS" 
+        isHovered={isHovered} 
+        path="/savings" 
+      />
+      <SidebarItem 
+        icon={<HelpOutline />} 
+        label="NOTE" 
+        isHovered={isHovered} 
+        path="/note" 
       />
     </div>
   );

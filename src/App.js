@@ -8,7 +8,10 @@ import Sidebar from './components/Sidebar';
 import WeatherDisplay from './components/WeatherDisplay';
 import RecentConsumptions from './components/RecentConsumptions';
 import RecentTariffs from './components/RecentTariffs';
-import SolarTracker from './components/SolarTracker'; // Import SolarTracker
+import SolarTracker from './components/SolarTracker'; 
+import DeviceScheduling from './components/DeviceScheduling'; 
+import Note from './components/Note'; 
+import Savings from './components/Savings'; 
 import { Line } from 'react-chartjs-2';
 
 const theme = createTheme({
@@ -185,7 +188,10 @@ const App = () => {
               />
               <Route path="/recent-consumptions" element={<RecentConsumptions />} />
               <Route path="/recent-tariffs" element={<RecentTariffs />} />
-              <Route path="/solar-tracker" element={<SolarTracker />} /> {/* Added SolarTracker Route */}
+              <Route path="/solar-tracker" element={<SolarTracker />} /> 
+              <Route path="/device-scheduling" element={<DeviceScheduling />} />
+              <Route path="/savings" element={<Savings />} />
+              <Route path="/note" element={<Note />} /> 
             </Routes>
           </Box>
         </Box>
