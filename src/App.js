@@ -44,13 +44,21 @@ const App = () => {
 
     const fetchPredictedTariffs = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/predicted_tariffs');
+        const response = await fetch(
+          'https://solar-dashboard-backend-1.onrender.com/api/predicted_tariffs'
+        );
+    
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+    
         const data = await response.json();
-        setPredictedTariffs(data);
+        setPredictedTariffs(data);  // Store the fetched data in state
       } catch (err) {
         console.error('Error fetching predicted tariffs:', err.message);
       }
     };
+    
 
     fetchWeatherData();
     fetchPredictedTariffs();
