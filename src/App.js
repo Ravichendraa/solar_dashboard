@@ -91,9 +91,9 @@ const App = () => {
                         sx={{ padding: 2, height: '400px', position: 'relative' }}
                       >
                         <Typography variant="h5">Predicted Tariff</Typography>
-                        <Typography variant="body1">
+                         <Typography variant="body1">
                           Current Hour Tariff Rate: {currentTariff.toFixed(3)} RS / kWh
-                        </Typography>
+                        </Typography> 
                         <Box
                           sx={{
                             marginTop: 2,
