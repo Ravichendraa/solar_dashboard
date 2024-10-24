@@ -14,13 +14,21 @@ import {
 const DeviceScheduling = () => {
   const [schedules, setSchedules] = useState([]);
 
-  // Fetch scheduled tasks from the API
+  // Fetch scheduled tasks from your backend
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await fetch('https://solar-dashboard-backend-1.onrender.com/api/savings');
+        const response = await fetch(
+          'https://solar-dashboard-backend-1.onrender.com/api/savings'
+        );
         const data = await response.json();
-        setSchedules(data);
+
+        // Filter out entries with no scheduled device ("None")
+        const scheduledDevices = data.filter(
+          (item) => item.scheduled_device && item.scheduled_device !== 'None'
+        );
+
+        setSchedules(scheduledDevices);
       } catch (error) {
         console.error('Error fetching schedules:', error);
       }
@@ -35,44 +43,51 @@ const DeviceScheduling = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 4,
-        height: '100vh',
+        padding:8,
+        minHeight: '100vh',
         backgroundColor: '#f5f5f5',
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Device Scheduling
+      <Typography variant="h4" gutterBottom sx={{ marginBottom: 2 }}>
+        Scheduled Devices
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 4 }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxWidth: '60%',
+          marginTop: 3,
+          boxShadow: 3,
+          borderRadius: 2,
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>Hour</strong></TableCell>
-              <TableCell><strong>Current Mode</strong></TableCell>
-              <TableCell><strong>Battery Level (%)</strong></TableCell>
-              <TableCell><strong>Scheduled Device</strong></TableCell>
-              <TableCell><strong>Savings (₹)</strong></TableCell>
-              <TableCell><strong>Remaining Battery (kWh)</strong></TableCell>
+              <TableCell align="center">
+                <strong>Device Name</strong>
+              </TableCell>
+              <TableCell align="center">
+                <strong>Time</strong>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {schedules.length > 0 ? (
               schedules.map((schedule, index) => (
                 <TableRow key={index}>
-                  <TableCell>{schedule.hour}</TableCell>
-                  <TableCell>{schedule.current_mode}</TableCell>
-                  <TableCell>{schedule.battery_level.toFixed(2)}</TableCell>
-                  <TableCell>{schedule.scheduled_device}</TableCell>
-                  <TableCell>{schedule.savings.toFixed(2)}</TableCell>
-                  <TableCell>{schedule.remaining_battery.toFixed(2)}</TableCell>
+                  <TableCell align="center">
+                    {schedule.scheduled_device}
+                  </TableCell>
+                  <TableCell align="center">
+                    {schedule.hour}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No scheduled tasks available
+                <TableCell colSpan={2} align="center">
+                  No scheduled devices available
                 </TableCell>
               </TableRow>
             )}

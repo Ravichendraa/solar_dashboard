@@ -1,16 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Modal,
+} from '@mui/material';
 
 const Savings = () => {
   const [savings, setSavings] = useState([]);
+  const [totalSavings, setTotalSavings] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // Fetch hourly savings data from backend
+  // Fetch savings data from backend
   useEffect(() => {
     const fetchSavings = async () => {
       try {
-        const response = await fetch('https://solar-dashboard-backend-1.onrender.com/api/hourly-savings');
+        const response = await fetch(
+          'https://solar-dashboard-backend-1.onrender.com/api/savings'
+        );
         const data = await response.json();
+
+        // Sum the 'savings (INR)' field correctly
+        const total = data.reduce((acc, item) => {
+          const savingsValue = parseFloat(item["savings (INR)"]) || 0;
+          return acc + savingsValue;
+        }, 0);
+
         setSavings(data);
+        setTotalSavings(total);
       } catch (error) {
         console.error('Error fetching savings:', error);
       }
@@ -18,6 +42,10 @@ const Savings = () => {
 
     fetchSavings();
   }, []);
+
+  // Open and close the modal
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
 
   return (
     <Box
@@ -32,35 +60,86 @@ const Savings = () => {
       }}
     >
       <Typography variant="h4" gutterBottom>
-        Hourly Savings
+        Today's Savings
       </Typography>
 
       <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 4 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>Hour</strong></TableCell>
-              <TableCell><strong>Savings (₹)</strong></TableCell>
+              <TableCell><strong>Day</strong></TableCell>
+              <TableCell><strong>Total Savings (₹)</strong></TableCell>
+              <TableCell><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {savings.length > 0 ? (
-              savings.map((saving, index) => (
-                <TableRow key={index}>
-                  <TableCell>{`${saving.hour}:00`}</TableCell>
-                  <TableCell>{saving.amount.toFixed(2)}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={2} align="center">
-                  No savings data available
-                </TableCell>
-              </TableRow>
-            )}
+            <TableRow>
+              <TableCell>Today</TableCell>
+              <TableCell>{totalSavings.toFixed(2)}</TableCell>
+              <TableCell>
+                <Button variant="outlined" onClick={handleOpenModal}>
+                  View Details
+                </Button>
+                
+              </TableCell>
+              
+            </TableRow>
+             
           </TableBody>
         </Table>
       </TableContainer>
+      <br></br>
+      <br></br>
+      <center >Not Enough Data To Show Historical Savings and Performance Metrics For Previous Days</center>
+
+      {/* Scrollable Modal */}
+      <Modal open={modalOpen} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            maxHeight: '80vh',
+            overflowY: 'auto',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Hourly Savings
+          </Typography>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell><strong>Hour</strong></TableCell>
+                <TableCell><strong>Savings (₹)</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {savings.length > 0 ? (
+                savings.map((saving) => (
+                  <TableRow key={saving._id}>
+                    <TableCell>{saving.hour}</TableCell>
+
+                    <TableCell>{parseFloat(saving["savings (INR)"]).toFixed(2)}</TableCell>
+                   
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} align="center">
+                    No hourly savings available
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Box>
+      </Modal>
     </Box>
   );
 };

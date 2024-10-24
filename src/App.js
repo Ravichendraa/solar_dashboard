@@ -8,10 +8,10 @@ import Sidebar from './components/Sidebar';
 import WeatherDisplay from './components/WeatherDisplay';
 import RecentConsumptions from './components/RecentConsumptions';
 import RecentTariffs from './components/RecentTariffs';
-import SolarTracker from './components/SolarTracker'; 
-import DeviceScheduling from './components/DeviceScheduling'; 
-import Note from './components/Note'; 
-import Savings from './components/Savings'; 
+import SolarTracker from './components/SolarTracker';
+import DeviceScheduling from './components/DeviceScheduling';
+import Note from './components/Note';
+import Savings from './components/Savings';
 import { Line } from 'react-chartjs-2';
 
 const theme = createTheme({
@@ -25,10 +25,16 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [predictedTariffs, setPredictedTariffs] = useState([]);
+  const [savingsData, setSavingsData] = useState(null); // Store savings data
+  const [mode, setMode] = useState(''); // Store current mode (solar/normal)
+  const [batteryPercent, setBatteryPercent] = useState(''); // Store current mode (solar/normal)
+  const [saving, setSaving] = useState(''); // Store current mode (solar/normal)
+  const [remainingTime, setRemainingTime] = useState(''); // Store remaining time for next switch
 
   const API_KEY = 'f24b4a280e5a809e46ca765aa9d2275e'; // Replace with your valid key
   const CITY_NAME = 'Jabalpur';
 
+  // Fetch Weather Data
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -44,28 +50,131 @@ const App = () => {
         setLoading(false);
       }
     };
-
+    
+    // Fetch Predicted Tariffs
     const fetchPredictedTariffs = async () => {
       try {
         const response = await fetch(
           'https://solar-dashboard-backend-1.onrender.com/api/predicted_tariffs'
         );
-    
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-    
+        if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
         const data = await response.json();
-        setPredictedTariffs(data);  // Store the fetched data in state
+        setPredictedTariffs(data);
       } catch (err) {
         console.error('Error fetching predicted tariffs:', err.message);
+      }
+    };
+
+    // Fetch Savings Data for Battery Percentage and Mode
+    const formatHourRange = (hour) => {
+      const nextHour = (hour + 1) % 24; // Ensure the hour wraps around after 23
+      return `${hour}:00 - ${nextHour}:00`;
+    };
+    const parseHourRange = (hourString) => {
+      const [startHour] = hourString.split('-').map(Number);
+      return startHour;
+    };
+    const fetchSavingsData = async () => {
+      try {
+        const response = await fetch('https://solar-dashboard-backend-1.onrender.com/api/savings');
+        if (!response.ok) throw new Error(`Error: ${response.status} ${response.statusText}`);
+    
+        const data = await response.json();
+    
+        // Get the current hour and format it to match the "hour" field in the API
+        const currentHour = new Date().getHours();
+        const currentHourRange = formatHourRange(currentHour);
+
+
+        const accumulatedSavings = data
+      .filter((item) => parseHourRange(item.hour) <= currentHour) // Filter data up to the current hour
+      .reduce(
+        (acc, item) => {
+          acc.totalSavings += parseFloat(item["savings (INR)"] || 0);
+          return acc;
+        },
+        {  totalSavings: 0 } // Initial accumulator
+      );
+      setSaving(accumulatedSavings.totalSavings);
+      
+
+
+      const now = new Date();
+
+    // Function to calculate remaining time in hours and minutes
+    const calculateTimeDifference = (futureHour) => {
+      const futureTime = new Date(now);
+      futureTime.setHours(futureHour, 0, 0, 0); // Set to the start of the future hour
+
+      const remainingMillis = futureTime - now;
+      const remainingHours = Math.floor(remainingMillis / (1000 * 60 * 60));
+      const remainingMinutes = Math.floor((remainingMillis % (1000 * 60 * 60)) / (1000 * 60));
+
+      return { remainingHours, remainingMinutes };
+    };
+
+    // Traverse from current hour to 24 hours ahead
+    const findNextModeSwitch = () => {
+      for (let i = 1; i <= 24; i++) {
+        const nextHour = (currentHour + i) % 24;
+
+        const nextMode = data.find((item) => item.hour === nextHour)?.mode;
+
+        if (nextMode && nextMode !== mode) {
+          return nextHour;
+        }
+      }
+      return null;
+    };
+
+    const nextSwitchHour = findNextModeSwitch();
+
+    if (nextSwitchHour !== null) {
+      const { remainingHours, remainingMinutes } = calculateTimeDifference(nextSwitchHour);
+      setRemainingTime(`${remainingHours}h ${remainingMinutes}m`);
+    } else {
+      setRemainingTime('No switch found in the next 24 hours');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        // Find the entry matching the current hour
+        const matchingEntry = data.find((item) => item.hour=== currentHourRange);
+        // const batteryPercentage=matchingEntry["battery_level (%)"];
+        setBatteryPercent(matchingEntry["battery_level (%)"] || '100%');
+    
+        if (matchingEntry) {
+          setSavingsData(matchingEntry);
+          setMode(matchingEntry["current_mode"] || 'Normal'); // Set the mode (default: Normal)
+        } else {
+          console.warn('No data found for the current hour');
+        }
+      } catch (err) {
+        console.error('Error fetching savings data:', err.message);
       }
     };
     
 
     fetchWeatherData();
     fetchPredictedTariffs();
+    fetchSavingsData();
   }, [API_KEY, CITY_NAME]);
+
+  // Calculate Remaining Time for Next Switch
+   
 
   const currentHour = new Date().getHours();
   const currentTariff = predictedTariffs.find((item) => item.hour === currentHour)?.tariff || 'N/A';
@@ -73,6 +182,7 @@ const App = () => {
 
   const temperature = weatherData?.main?.temp || 'N/A';
   const weatherDescription = weatherData?.weather?.[0]?.description || 'N/A';
+  // const batteryPercentage = savingsData?.batteryPercentage || 0; // Get battery percentage
 
   if (loading) return <CircularProgress />;
   if (error) return <div>Error: {error}</div>;
@@ -91,27 +201,16 @@ const App = () => {
                     <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <Paper className="card" sx={{ padding: 2 }}>
                         <Typography variant="h6">Current Mode</Typography>
-                        <Typography>SOLAR</Typography>
+                        <Typography>{mode.toUpperCase()}</Typography>
                       </Paper>
                       <Paper className="card" sx={{ padding: 2 }}>
                         <Typography variant="h6">Savings</Typography>
-                        <Typography>40 RS</Typography>
+                        <Typography>{saving}</Typography>
                       </Paper>
-                      <Paper
-                        className="tariff-card"
-                        sx={{ padding: 2, height: '400px', position: 'relative' }}
-                      >
+                      <Paper className="tariff-card" sx={{ padding: 2, height: '400px' }}>
                         <Typography variant="h5">Predicted Tariff</Typography>
-                         
-                        <Box
-                          sx={{
-                            marginTop: 2,
-                            height: '300px',
-                            position: 'absolute',
-                            bottom: 10,
-                            width: '100%',
-                          }}
-                        >
+                        
+                        <Box sx={{ height: '300px', marginTop: 2 }}>
                           <Line
                             data={{
                               labels: filteredPredictedTariffs.map((item) => `${item.hour}:00`),
@@ -122,36 +221,12 @@ const App = () => {
                                   borderColor: 'rgba(75, 192, 192, 1)',
                                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                   borderWidth: 2,
-                                  pointRadius: 3,
                                 },
                               ],
                             }}
                             options={{
                               responsive: true,
-                              maintainAspectRatio: false,
-                              scales: {
-                                y: {
-                                  beginAtZero: true,
-                                  ticks: {
-                                    callback: (value) => `${Math.round(value)}`,
-                                  },
-                                },
-                                x: {
-                                  title: {
-                                    display: true,
-                                    text: 'Time of Day',
-                                  },
-                                },
-                              },
-                              plugins: {
-                                legend: { display: true, position: 'top' },
-                                tooltip: {
-                                  callbacks: {
-                                    label: (tooltipItem) =>
-                                      `₹${tooltipItem.raw.toFixed(3)} per kWh`,
-                                  },
-                                },
-                              },
+                              scales: { y: { beginAtZero: true } },
                             }}
                           />
                         </Box>
@@ -164,21 +239,16 @@ const App = () => {
                         city_name={CITY_NAME}
                       />
                       <Paper className="card" sx={{ padding: 2 }}>
-                        <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
-                          <BatteryFull sx={{ marginRight: 1 }} /> Remaining Charge: 75%
+                        <Typography variant="h6">
+                          <BatteryFull sx={{ marginRight: 1 }} /> Remaining Charge: {batteryPercent}%
                         </Typography>
-                        <LinearProgress
-                          variant="determinate"
-                          value={75}
-                          sx={{ height: 10, borderRadius: 1, marginTop: 1 }}
-                        />
+                        <LinearProgress variant="determinate" value={batteryPercent} sx={{ height: 10 }} />
                       </Paper>
                       <Paper className="card" sx={{ padding: 2 }}>
-                        <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="h6">
                           <AccessTime sx={{ marginRight: 1 }} /> Next Possible Switch:
                         </Typography>
-                        <Typography>20:30, October 19</Typography>
-                        <Typography variant="body2">Remaining Time: 3 hours</Typography>
+                        <Typography>{remainingTime}</Typography>
                       </Paper>
                     </Grid>
                   </Grid>
@@ -186,13 +256,14 @@ const App = () => {
               />
               <Route path="/recent-consumptions" element={<RecentConsumptions />} />
               <Route path="/recent-tariffs" element={<RecentTariffs />} />
-              <Route path="/solar-tracker" element={<SolarTracker />} /> 
+              <Route path="/solar-tracker" element={<SolarTracker />} />
               <Route path="/device-scheduling" element={<DeviceScheduling />} />
               <Route path="/savings" element={<Savings />} />
-              <Route path="/note" element={<Note />} /> 
+              <Route path="/note" element={<Note />} />
             </Routes>
           </Box>
         </Box>
+        
       </BrowserRouter>
     </ThemeProvider>
   );
