@@ -16,7 +16,7 @@ const RecentConsumptions = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/consumptions');
+        const response = await axios.get('https://solar-dashboard-backend-1.onrender.com/api/consumptions');
         console.log('Fetched Data:', response.data);
         setData(response.data);
       } catch (err) {

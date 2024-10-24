@@ -12,7 +12,7 @@ const RecentTariffs = () => {
   useEffect(() => {
     const fetchTariffs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/tariffs'); // Adjust the endpoint as needed
+        const response = await axios.get('https://solar-dashboard-backend-1.onrender.com/api/tariffs'); // Adjust the endpoint as needed
         setTariffs(response.data);
         setLoading(false);
       } catch (err) {

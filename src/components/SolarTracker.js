@@ -18,7 +18,7 @@ const SolarTracker = () => {
   useEffect(() => {
     const fetchEnergyData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/energy-data');
+        const response = await axios.get('https://solar-dashboard-backend-1.onrender.com/api/energy-data');
         console.log('Fetched energy data:', response.data);
         setEnergyData(response.data);
         setLoading(false);
