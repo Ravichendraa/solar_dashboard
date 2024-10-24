@@ -33,12 +33,13 @@ const RecentTariffs = () => {
     const dailyTariffs = {};
 
     tariffs.forEach(item => {
-      const date = new Date(item.DateTime).toLocaleDateString();
-      if (!dailyTariffs[date]) {
-        dailyTariffs[date] = { sum: 0, count: 0 };
+      const dateParts = item.DateTime.split(' ')[0].split('-'); // Get the date part and split by '-'
+      const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2].slice(-2)}`; // Format as dd-mm-yy
+      if (!dailyTariffs[formattedDate]) {
+        dailyTariffs[formattedDate] = { sum: 0, count: 0 };
       }
-      dailyTariffs[date].sum += item['Tariff (INR/kWh)'];
-      dailyTariffs[date].count++;
+      dailyTariffs[formattedDate].sum += item['Tariff (INR/kWh)'];
+      dailyTariffs[formattedDate].count++;
     });
 
     return Object.keys(dailyTariffs).map(date => ({
@@ -52,16 +53,16 @@ const RecentTariffs = () => {
     const hourlyTariffs = {};
 
     tariffs.forEach(item => {
-      const itemDate = new Date(item.DateTime);
-      const time = itemDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-      const itemDateString = itemDate.toLocaleDateString();
+      const itemDateParts = item.DateTime.split(' ')[0].split('-');
+      const itemTime = item.DateTime.split(' ')[1]; // Get time part
+      const itemFormattedDate = `${itemDateParts[0]}-${itemDateParts[1]}-${itemDateParts[2].slice(-2)}`; // Format as dd-mm-yy
 
-      if (itemDateString === date) {
-        if (!hourlyTariffs[time]) {
-          hourlyTariffs[time] = { sum: 0, count: 0 };
+      if (itemFormattedDate === date) {
+        if (!hourlyTariffs[itemTime]) {
+          hourlyTariffs[itemTime] = { sum: 0, count: 0 };
         }
-        hourlyTariffs[time].sum += item['Tariff (INR/kWh)'];
-        hourlyTariffs[time].count++;
+        hourlyTariffs[itemTime].sum += item['Tariff (INR/kWh)'];
+        hourlyTariffs[itemTime].count++;
       }
     });
 
@@ -91,7 +92,7 @@ const RecentTariffs = () => {
   if (error) return <div>Error: {error}</div>;
 
   // Get hourly data for the selected date
-  const hourlyData = selectedDate ? prepareHourlyData(new Date(selectedDate).toLocaleDateString()) : [];
+  const hourlyData = selectedDate ? prepareHourlyData(selectedDate) : [];
   const chartData = selectedDate ? prepareChartData(hourlyData, true) : prepareChartData(dailyData, false);
   const chartOptions = {
     maintainAspectRatio: false,
@@ -111,13 +112,14 @@ const RecentTariffs = () => {
       },
     },
   };
+
   return (
     <div>
       <Typography variant="h4">Recent Tariffs</Typography>
       <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
         <MenuItem value="" disabled>Select a Date</MenuItem>
         {dailyData.map(({ date }) => (
-          <MenuItem key={date} value={new Date(date).toISOString()}>
+          <MenuItem key={date} value={date}>
             {date}
           </MenuItem>
         ))}
@@ -127,11 +129,10 @@ const RecentTariffs = () => {
         {selectedDate ? 'Hourly Tariff Rate' : 'Daily Average Tariff Rate'}
       </Typography>
       <div style={{ width: '80%', height: '400px', margin: '0 auto' }}>
-      <Line data={chartData} options={chartOptions} />
+        <Line data={chartData} options={chartOptions} />
       </div>
     </div>
   );
 };
 
 export default RecentTariffs;
-

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Home, BarChart } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Typography } from '@mui/material'; // Import Typography for styling
+import { Typography } from '@mui/material';
 
 const Sidebar = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -16,13 +16,24 @@ const Sidebar = () => {
       onMouseLeave={handleMouseLeave}
     >
       <SidebarItem icon={<Home />} label="HOME" isHovered={isHovered} path="/" />
-      <SidebarItem
-        icon={<Typography variant="h6" style={{ marginRight: '4px' }}>₹</Typography>} // Indian Rupee symbol
-        label="RECENT TARIFF"
-        isHovered={isHovered}
-        path="/recent-tariffs"
+      <SidebarItem 
+        icon={<Typography variant="h6" style={{ marginRight: '4px' }}>₹</Typography>} 
+        label="RECENT TARIFF" 
+        isHovered={isHovered} 
+        path="/recent-tariffs" 
       />
-      <SidebarItem icon={<BarChart />} label="RECENT CONSUMPTIONS" isHovered={isHovered} path="/recent-consumptions" />
+      <SidebarItem 
+        icon={<BarChart />} 
+        label="RECENT CONSUMPTIONS" 
+        isHovered={isHovered} 
+        path="/recent-consumptions" 
+      />
+      <SidebarItem 
+        icon={<BarChart />} 
+        label="SOLAR TRACKER" 
+        isHovered={isHovered} 
+        path="/solar-tracker" 
+      />
     </div>
   );
 };
