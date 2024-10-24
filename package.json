@@ -13,7 +13,9 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.0.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-chartjs-2": "^4.3.1",  // Add this line
+    "chart.js": "^3.9.1"  // Add this line
   },
   "scripts": {
     "start": "react-scripts start",
