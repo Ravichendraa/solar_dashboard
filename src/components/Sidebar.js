@@ -15,14 +15,14 @@ const Sidebar = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <SidebarItem icon={<Home />} label="Home" isHovered={isHovered} path="/" />
+      <SidebarItem icon={<Home />} label="HOME" isHovered={isHovered} path="/" />
       <SidebarItem
         icon={<Typography variant="h6" style={{ marginRight: '4px' }}>₹</Typography>} // Indian Rupee symbol
-        label="Recent Tariff"
+        label="RECENT TARIFF"
         isHovered={isHovered}
         path="/recent-tariffs"
       />
-      <SidebarItem icon={<BarChart />} label="Recent Consumptions" isHovered={isHovered} path="/recent-consumptions" />
+      <SidebarItem icon={<BarChart />} label="RECENT CONSUMPTIONS" isHovered={isHovered} path="/recent-consumptions" />
     </div>
   );
 };

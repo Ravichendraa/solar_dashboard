@@ -2,7 +2,8 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'IBM Plex Mono ', monospace;
+  font-weight: bol;
   background-color: #ffffff;
 }
 
@@ -56,6 +57,11 @@ body {
 .card-icon {
   font-size: 28px;
   color: #1976d2;
+}
+
+
+.tariff-card {
+  font-family: 'ROBOTO MONO', monospace;
 }
 
 /* Adjust Grid Layout for Specific Sections */
@@ -139,3 +145,6 @@ body {
   opacity: 1; /* Full opacity */
   transition: opacity 0.3s; /* Smooth transition for label */
 }
+
+
+

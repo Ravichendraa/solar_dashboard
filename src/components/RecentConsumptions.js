@@ -79,6 +79,8 @@ const RecentConsumptions = () => {
       'Microwave',
       'Laptop',
       'Water Heater',
+      'Dishwasher',
+      'EV Charger',
       'Other Devices',
     ],
     datasets: [
@@ -93,9 +95,11 @@ const RecentConsumptions = () => {
           acc[5] += item['Microwave (kWh)'] || 0;
           acc[6] += item['Laptop (kWh)'] || 0;
           acc[7] += item['Water Heater (kWh)'] || 0;
-          acc[8] += item['Other Devices (kWh)'] || 0;
+          acc[8] += item['Dishwasher (kWh)'] || 0;
+          acc[9] += item['EV Charger (kWh)'] || 0;
+          acc[10] += item['Other Devices (kWh)'] || 0;
           return acc;
-        }, Array(9).fill(0)), // Initialize array with zeros
+        }, Array(11).fill(0)), // Initialize array with zeros
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
