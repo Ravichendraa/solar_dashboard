@@ -25,6 +25,8 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [predictedTariffs, setPredictedTariffs] = useState([]);
+  const [savings, setSavings] = useState([]);
+  const [totalSavings, setTotalSavings] = useState(0);
   const [savingsData, setSavingsData] = useState(null); // Store savings data
   const [mode, setMode] = useState(''); // Store current mode (solar/normal)
   const [batteryPercent, setBatteryPercent] = useState(''); // Store current mode (solar/normal)
@@ -35,6 +37,31 @@ const App = () => {
   const CITY_NAME = 'Jabalpur';
 
   // Fetch Weather Data
+
+  useEffect(() => {
+    const fetchSavings = async () => {
+      try {
+        const response = await fetch(
+          'https://solar-dashboard-backend-1.onrender.com/api/savings'
+        );
+        const data = await response.json();
+
+        // Sum the 'savings (INR)' field correctly
+        const total = data.reduce((acc, item) => {
+          const savingsValue = parseFloat(item["savings (INR)"]) || 0;
+          return acc + savingsValue;
+        }, 0);
+
+        setSavings(data);
+        setTotalSavings(total);
+      } catch (error) {
+        console.error('Error fetching savings:', error);
+      }
+    };
+
+    fetchSavings();
+  }, []);
+
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -204,8 +231,8 @@ const App = () => {
                         <Typography>{mode.toUpperCase()}</Typography>
                       </Paper>
                       <Paper className="card" sx={{ padding: 2 }}>
-                        <Typography variant="h6">Savings</Typography>
-                        <Typography>{saving}</Typography>
+                        <Typography variant="h6">Potential Savings</Typography>
+                        <Typography>₹ {totalSavings.toFixed(2)}</Typography>
                       </Paper>
                       <Paper className="tariff-card" sx={{ padding: 2, height: '400px' }}>
                         <Typography variant="h5">Predicted Tariff</Typography>
@@ -248,7 +275,7 @@ const App = () => {
                         <Typography variant="h6">
                           <AccessTime sx={{ marginRight: 1 }} /> Next Possible Switch:
                         </Typography>
-                        <Typography>{remainingTime}</Typography>
+                        <Typography> 1Hour 30 Minutes</Typography>
                       </Paper>
                     </Grid>
                   </Grid>
