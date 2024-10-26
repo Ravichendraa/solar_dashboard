@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import axios from 'axios';
-import { Select, MenuItem, CircularProgress, Typography } from '@mui/material';
+import { Select, MenuItem, CircularProgress, Typography, Box } from '@mui/material';
 
 const RecentTariffs = () => {
   const [tariffs, setTariffs] = useState([]);
@@ -88,7 +88,24 @@ const RecentTariffs = () => {
     ],
   });
 
-  if (loading) return <CircularProgress />;
+  // Centered loading spinner
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // Full height of the viewport
+          backgroundColor: '#f5f5f5', // Optional background color
+          position: 'relative',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
   if (error) return <div>Error: {error}</div>;
 
   // Get hourly data for the selected date

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import axios from 'axios';
-import { Select, MenuItem, CircularProgress, Typography } from '@mui/material';
+import { Select, MenuItem, CircularProgress, Typography, Box } from '@mui/material';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
@@ -21,10 +21,10 @@ const SolarTracker = () => {
         const response = await axios.get('https://solar-dashboard-backend-1.onrender.com/api/energy-data');
         console.log('Fetched energy data:', response.data);
         setEnergyData(response.data);
-        setLoading(false);
       } catch (err) {
         console.error('Error fetching energy data:', err);
         setError('Failed to fetch energy data');
+      } finally {
         setLoading(false);
       }
     };
@@ -121,7 +121,24 @@ const SolarTracker = () => {
     },
   };
 
-  if (loading) return <CircularProgress />;
+  // Center loading spinner
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: '#f0f0f0',
+          position: 'relative',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   if (error) return <div>Error: {error}</div>;
 
   return (

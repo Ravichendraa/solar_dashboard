@@ -53,9 +53,9 @@ const Savings = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 4,
-        height: '100vh',
+        paddingTop: 6,  // Adjust this value to raise or lower the table
+        paddingX: 2,
+        minHeight: '100vh',
         backgroundColor: '#f5f5f5',
       }}
     >
@@ -63,7 +63,7 @@ const Savings = () => {
         Today's Savings
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 4 }}>
+      <TableContainer component={Paper} sx={{ maxWidth: '80%', marginTop: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -80,17 +80,15 @@ const Savings = () => {
                 <Button variant="outlined" onClick={handleOpenModal}>
                   View Details
                 </Button>
-                
               </TableCell>
-              
             </TableRow>
-             
           </TableBody>
         </Table>
       </TableContainer>
-      <br></br>
-      <br></br>
-      <center >Not Enough Data To Show Historical Savings and Performance Metrics For Previous Days</center>
+
+      <Typography sx={{ textAlign: 'center', color: '#616161', mt: 2 }}>
+        Not Enough Data To Show Historical Savings and Performance Metrics For Previous Days
+      </Typography>
 
       {/* Scrollable Modal */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
@@ -124,9 +122,7 @@ const Savings = () => {
                 savings.map((saving) => (
                   <TableRow key={saving._id}>
                     <TableCell>{saving.hour}</TableCell>
-
                     <TableCell>{parseFloat(saving["savings (INR)"]).toFixed(2)}</TableCell>
-                   
                   </TableRow>
                 ))
               ) : (

@@ -7,10 +7,11 @@ const Note = () => {
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',  // Full page height
+        alignItems: 'flex-start',  // Align content closer to the top
+        minHeight: '100vh',
+        paddingTop: 8,  // Adjust this padding to position higher or lower on the page
         backgroundColor: '#f5f5f5',
-        padding: 2,
+        paddingX: 2,
       }}
     >
       <Paper 
@@ -31,7 +32,7 @@ const Note = () => {
           <strong>Prediction Date:</strong> 21 October 2024
         </Typography>
         <Typography variant="body1" gutterBottom>
-          <strong>Data Range Used:</strong> 20 September 2024 - 20 October 2024
+          <strong>Data Range Used:</strong> 21 September 2024 - 20 October 2024
         </Typography>
       </Paper>
     </Box>

@@ -112,7 +112,6 @@ const App = () => {
         const currentHour = new Date().getHours();
         const currentHourRange = formatHourRange(currentHour);
 
-
         const accumulatedSavings = data
       .filter((item) => parseHourRange(item.hour) <= currentHour) // Filter data up to the current hour
       .reduce(
@@ -124,8 +123,6 @@ const App = () => {
       );
       setSaving(accumulatedSavings.totalSavings);
       
-
-
       const now = new Date();
 
     // Function to calculate remaining time in hours and minutes
@@ -162,25 +159,9 @@ const App = () => {
     } else {
       setRemainingTime('No switch found in the next 24 hours');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
         // Find the entry matching the current hour
-        const matchingEntry = data.find((item) => item.hour=== currentHourRange);
-        // const batteryPercentage=matchingEntry["battery_level (%)"];
+        const matchingEntry = data.find((item) => item.hour === currentHourRange);
         setBatteryPercent(matchingEntry["battery_level (%)"] || '100%');
     
         if (matchingEntry) {
@@ -201,17 +182,21 @@ const App = () => {
   }, [API_KEY, CITY_NAME]);
 
   // Calculate Remaining Time for Next Switch
-   
-
   const currentHour = new Date().getHours();
   const currentTariff = predictedTariffs.find((item) => item.hour === currentHour)?.tariff || 'N/A';
   const filteredPredictedTariffs = predictedTariffs.filter((item) => item.hour >= currentHour);
 
   const temperature = weatherData?.main?.temp || 'N/A';
   const weatherDescription = weatherData?.weather?.[0]?.description || 'N/A';
-  // const batteryPercentage = savingsData?.batteryPercentage || 0; // Get battery percentage
 
-  if (loading) return <CircularProgress />;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', position: 'relative', backgroundColor: '#f0f0f0' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -290,7 +275,6 @@ const App = () => {
             </Routes>
           </Box>
         </Box>
-        
       </BrowserRouter>
     </ThemeProvider>
   );

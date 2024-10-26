@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import 'chart.js/auto'; // Import Chart.js autoloader
-import { TextField, MenuItem, Button, CircularProgress } from '@mui/material';
+import { TextField, Button, CircularProgress, Box } from '@mui/material';
 
 const RecentConsumptions = () => {
   const [data, setData] = useState([]); // Full data from API
@@ -125,7 +125,22 @@ const RecentConsumptions = () => {
     },
   };
 
-  if (loading) return <CircularProgress />; // Display loading message
+  // Centered loading spinner
+  if (loading) return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh', // Full height of the viewport
+        backgroundColor: '#f5f5f5', // Optional background color
+        position: 'relative',
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  ); // Display loading message
+  
   if (error) return <p>{error}</p>; // Display error message if any
 
   return (
@@ -170,7 +185,8 @@ const RecentConsumptions = () => {
       {filteredData.length ? (
         <Bar data={chartData} options={options} />
       ) : (
-        <p>No data available for the selected time range.</p>
+        <p>No data available for the selected time range.<br></br>
+        Data is Only Available from 21 Sept 2024 to 20 Oct 2024.</p>
       )}
     </div>
   );
