@@ -127,6 +127,7 @@ const SolarTracker = () => {
       <Box
         sx={{
           display: 'flex',
+          flexDirection: 'column', // Stack items vertically
           justifyContent: 'center',
           alignItems: 'center',
           height: '100vh',
@@ -135,9 +136,19 @@ const SolarTracker = () => {
         }}
       >
         <CircularProgress />
+        <Typography 
+          sx={{ 
+            mt: 2,  // Margin on top to create space between spinner and text
+            color: '#555',  // Optional color customization for the text
+            fontSize: '1.2rem',  // Optional font size
+          }}
+        >
+           Loading details... It might take upto 30 seconds
+        </Typography>
       </Box>
     );
   }
+
 
   if (error) return <div>Error: {error}</div>;
 

@@ -193,6 +193,8 @@ const App = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', position: 'relative', backgroundColor: '#f0f0f0' }}>
         <CircularProgress />
+        Loading details... It might take upto 30 seconds 
+        
       </Box>
     );
   }

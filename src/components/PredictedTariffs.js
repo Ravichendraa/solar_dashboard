@@ -24,7 +24,33 @@ const PredictedTariffs = () => {
     fetchPredictedTariffs();
   }, []);
 
-  if (loading) return <CircularProgress />;
+    // Centered loading spinner
+    if (loading) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column', 
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            backgroundColor: '#f0f0f0',
+            position: 'relative',
+          }}
+        >
+          <CircularProgress />
+          <Typography 
+            sx={{ 
+              mt: 2,  
+              color: '#555',  
+              fontSize: '1.2rem',  
+            }}
+          >
+            Loading details... It might take upto 30 seconds
+          </Typography>
+        </Box>
+      );
+    }
   if (error) return <div>Error: {error}</div>;
 
   // Prepare data for the Line chart

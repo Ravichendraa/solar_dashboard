@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import 'chart.js/auto'; // Import Chart.js autoloader
-import { TextField, Button, CircularProgress, Box } from '@mui/material';
+import { TextField, Button, CircularProgress, Box,Typography } from '@mui/material';
 
 const RecentConsumptions = () => {
   const [data, setData] = useState([]); // Full data from API
@@ -125,21 +125,33 @@ const RecentConsumptions = () => {
     },
   };
 
-  // Centered loading spinner
-  if (loading) return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh', // Full height of the viewport
-        backgroundColor: '#f5f5f5', // Optional background color
-        position: 'relative',
-      }}
-    >
-      <CircularProgress />
-    </Box>
-  ); // Display loading message
+    // Centered loading spinner
+    if (loading) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column', 
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            backgroundColor: '#f0f0f0',
+            position: 'relative',
+          }}
+        >
+          <CircularProgress />
+          <Typography 
+            sx={{ 
+              mt: 2,  
+              color: '#555',  
+              fontSize: '1.2rem',  
+            }}
+          >
+             Loading details... It might take upto 30 seconds
+          </Typography>
+        </Box>
+      );
+    }
   
   if (error) return <p>{error}</p>; // Display error message if any
 
